@@ -2,6 +2,7 @@
   #?@(:clj
       [(:refer-clojure :exclude [reader-conditional?])
        (:require
+         [cljfmt.config :refer [default-indents]]
          [clojure.java.io :as io]
          [clojure.zip :as zip]
          [rewrite-clj.node :as n]
@@ -11,6 +12,7 @@
         (:import java.util.regex.Pattern)]
       :cljs
        [(:require
+         [cljfmt.config :refer [default-indents]]
          [cljs.reader :as reader]
          [clojure.zip :as zip]
          [clojure.string :as str]
@@ -19,11 +21,7 @@
          [rewrite-clj.zip :as z]
          [rewrite-clj.zip.base :as zb :refer [edn]]
          [rewrite-clj.zip.whitespace :as zw
-          :refer [append-space skip whitespace-or-comment?]])
-        (:require-macros [cljfmt.core :refer [read-resource]])]))
-
-#?(:clj (def read-resource* (comp read-string slurp io/resource)))
-#?(:clj (defmacro read-resource [path] `'~(read-resource* path)))
+          :refer [append-space skip whitespace-or-comment?]])]))
 
 (def zwhitespace?
   #?(:clj z/whitespace? :cljs zw/whitespace?))
@@ -225,11 +223,6 @@
              (> (index-of zloc) idx))
       (inner-indent zloc key 0 nil)
       (list-indent zloc))))
-
-(def default-indents
-  (merge (read-resource "cljfmt/indents/clojure.clj")
-         (read-resource "cljfmt/indents/compojure.clj")
-         (read-resource "cljfmt/indents/fuzzy.clj")))
 
 (defmulti ^:private indenter-fn
   (fn [sym [type & args]] type))
